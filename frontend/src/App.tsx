@@ -1,29 +1,22 @@
 import { useEffect, useRef, useState } from 'react'
-import { io, Socket } from 'socket.io-client';
+import { Socket } from 'socket.io-client';
 import './App.css'
-const BASE_URL: string = import.meta.env.VITE_BASE_URL || 'http://localhost:3001';
+import { RecordingsList } from './components/RecordingsList';
+import { RecorderCard } from './components/RecorderCard';
+import { SocketProvider, useSocket } from './context/SocketContext';
 
-function App() {
+function SpeechAnalyzer() {
   const [isRecording, setIsRecording] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const [recordings, setRecordings] = useState<any[]>([]);
   const socketRef = useRef<Socket | null>(null);
 
+  const { socket, isConnected } = useSocket();
+
   useEffect(() => {
 
-    console.log('Connecting to socket server at', BASE_URL);
-    socketRef.current = io(BASE_URL);
-
-    socketRef.current.on('connect', () => {
-      console.log('Connected to socket server with id:', socketRef.current?.id);
-    });
-
-    socketRef.current.on('disconnect', () => {
-      console.log('Disconnected from socket server');
-    });
-
-    socketRef.current.on('audio_parsed', (data) => {
+    socket.on('audio_parsed', (data) => {
       console.log('Message received from server:', data);
       setRecordings((prevRecordings) => {
         const updatedRecordings = [...prevRecordings];
@@ -36,7 +29,7 @@ function App() {
         return updatedRecordings;
       });
     });
-    
+
     // Cleanup on component unmount
     return () => {
       if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
@@ -46,7 +39,7 @@ function App() {
         socketRef.current.disconnect();
       }
     };
-  }, []);
+  }, [socket, mediaRecorderRef]);
 
   const startRecording = async () => {
     try {
@@ -106,39 +99,24 @@ function App() {
 
   return (
     <>
-      <h1 className="text-3xl font-bold underline">   Numeo Speech to Text System  </h1>
+      <SocketProvider>
+        <h1 className="text-3xl font-bold underline">   Numeo Speech to Text System  </h1>
 
-      <div>
-        {!isRecording ? (
-          <button
-            className="mt-5 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            onClick={startRecording}
-          >
-            Record
-          </button>
-        ) : (
-          <button
-            className="mt-5 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-            onClick={stopRecording}
-          >
-            Stop
-          </button>
-        )}
-      </div>
+        <p>Socket Status: {isConnected ? 'Connected' : 'Disconnected'}</p>
+        <RecorderCard isRecording={isRecording} startRecording={startRecording} stopRecording={stopRecording} />
 
-      <div>
-        <h2 className="text-2xl font-bold mt-5">Recordings:</h2>
-        <ul>
-          {recordings.map((recording, index) => (
-            <li key={index}>
-              <audio controls src={recording.url}></audio>
-              <p className='text-left'>{recording.text}</p>
-            </li>
-          ))}
-        </ul>
-      </div>
+        <RecordingsList recordings={recordings} />
+      </SocketProvider>
     </>
   )
+}
+
+function App() {
+  return (
+    <SocketProvider>
+      <SpeechAnalyzer />
+    </SocketProvider>
+  );
 }
 
 export default App
