@@ -1,4 +1,4 @@
 import { io, Socket } from 'socket.io-client';
-const BASE_URL: string = import.meta.env.VITE_BASE_URL || 'http://localhost:3001';
+const BASE_URL: string = import.meta.env.VITE_BASE_URL || 'http://localhost:3000';
 
 export const socket: Socket = io(BASE_URL);
