@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",             /* Specify module code generation: 'none', 'commonjs', 'amd', 'umd', 'system', 'es2015', 'es2020', or 'ESNext'. Node.js typically uses CommonJS. */
+    "esModuleInterop": true,          /* Enables compatibility between CommonJS and ES modules imports. */
+    "target": "es2020",               /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019', 'ES2020', 'ES2021', or 'ESNext'. Use a modern version compatible with your Node.js runtime. */
+    "moduleResolution": "node",       /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */
+    "outDir": "dist",                 /* Redirect output structure to the directory 'dist'. */
+    "strict": true,                   /* Enable all strict type-checking options. (Recommended). */
+    "skipLibCheck": true,             /* Skip type checking of declaration files. (Recommended). */
+    "forceConsistentCasingInFileNames": true /* Ensure that casing is consistent throughout a file path. (Recommended). */
+  },
+  "include": ["./server.ts"],             /* Only include files within the 'src' directory for compilation. */
+  "exclude": ["node_modules", "dist"]  /* Exclude 'node_modules' and 'dist' directories from compilation. */
+}
