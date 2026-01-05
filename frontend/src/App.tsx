@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
-import './App.css'
 import { RecordingsList } from './components/RecordingsList';
 import { RecorderCard } from './components/RecorderCard';
 import { SocketProvider, useSocket } from './context/SocketContext';
+import './App.css'
 
 function SpeechAnalyzer() {
   const [isRecording, setIsRecording] = useState(false);
